@@ -1,6 +1,6 @@
 {
   "name": "checkout-ui-custom",
-  "vendor": "vtex",
+  "vendor": "patbo",
   "version": "0.18.9",
   "title": "Checkout Custom",
   "description": "Make possible to customize the checkout layout using a easy to use interface from the admin",
