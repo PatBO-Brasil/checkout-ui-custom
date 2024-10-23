@@ -329,6 +329,87 @@ var Scolados_Checkout = {
   },
 }
 
+// BirthDate - begin 
+
+function getBirthDate() {  
+    var email = $('#client-email').val();
+    if(!email || email == "") {
+        email = $("p.client-email span").text();        
+    }
+    $.get(`https://signup-patbo.inovaki.com.br/get-field-by-email/?email=${email}&field=birthDate`, function(data) {
+        console.log(data[0]);
+        var result = data[0].birthDate;
+        if(result) {
+            result = result.split("T");
+            $("#client-birthDate").val(result[0]);
+            $("#client-birthDate").addClass("success");
+        }
+    });
+}
+
+function updateBirthDate() {
+    var n;
+    var email = $('#client-email').val();
+    if(!email || email == "") {
+        email = $("p.client-email span").text();
+    }
+    var birthDate = $('#client-birthDate').val();
+    var dataObj = `{ "email": "${email}", "birthDate": "${birthDate}" }`;
+    $.ajax({
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        url: "https://signup-patbo.inovaki.com.br/update-birthdate",
+        type: "PATCH",
+        data: dataObj,
+        processData: false,
+        dataType: 'json'
+    }).success(function (t) {
+        n = t;
+        console.log("success");
+    }).fail(function (t) {
+        n = t;
+        console.log("fail");
+    });
+    console.log(n);
+}
+
+function validateBirthDate(element) {
+    var birthDate = $(element).val();
+    if (birthDate == '') {
+        $(element).removeClass("success");
+        $(element).addClass('error');
+        if($("#dateError").length == 0) {
+            $(element).closest('p').append('<span id="dateError" class="help error pull-right">Data inválida</span>');
+        }
+        $('#go-to-payment').attr("disabled", "true")
+
+    } else {
+        $(element).removeClass("error");
+        $(element).addClass('success');
+        $(element).closest('p').find('span.help').remove();
+        $('#go-to-payment').removeAttr("disabled")
+    }
+}
+
+function incluiClique() {
+    $("button.submit.btn.btn-success.btn-large.btn-block").click(function () {
+        if($('#client-birthDate').val() != "") {
+            setTimeout(updateBirthDate(), 1000);
+        }
+    });
+}
+
+function addBirthDateInput() {  
+  if(navigator.userAgent.toLowerCase().match('android')){  
+    $('<p class="client-birthDate input text required mask"><label for="client-birthDate" data-bind="text: birthDateLabel">Nascimento</label><input type="date" id="client-birthDate" class="input-small" placeholder="99/99/9999" onblur="validateBirthDate(this)" onclick="alert(\'CASO DESEJE MUDAR O ANO, BASTA CLICAR EM CIMA DO MESMO!\')"></p>').insertAfter('form fieldset .client-document:eq(1)');
+  } else {
+    $('<p class="client-birthDate input text required mask"><label for="client-birthDate" data-bind="text: birthDateLabel">Nascimento</label><input type="date" id="client-birthDate" class="input-small" placeholder="99/99/9999" onblur="validateBirthDate(this)"></p>').insertAfter('form fieldset .client-document:eq(1)');
+  }
+}
+
+// BirthDate - end
+
 $(document).ready(function () {
   Scolados_Checkout.mounted();
   console.log("Tentativa de teste");
@@ -339,6 +420,22 @@ $(document).ready(function () {
       showPopup();
     }, 3000);
   }
+
+  addBirthDateInput();
+  incluiClique();
+  $("#edit-profile-data").click(function() {
+    console.log("entrou aqui");
+
+      getBirthDate();
+
+  });
+
+  /*$('#client-birthDate').mobiscroll().datepicker({
+      controls: ['date'],
+      touchUi: true
+  });*/
+
+  //$.mobile.page.prototype.options.degradeInputs.date = true;
 
   vtexjs.checkout.getOrderForm().done(function(orderForm) {
     verifyCEP(orderForm?.shippingData?.address?.postalCode)
