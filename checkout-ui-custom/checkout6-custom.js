@@ -329,12 +329,12 @@ var Scolados_Checkout = {
   },
 }
 
-// BirthDate - begin 
+// BirthDate - begin
 
-function getBirthDate() {  
+function getBirthDate() {
     var email = $('#client-email').val();
     if(!email || email == "") {
-        email = $("p.client-email span").text();        
+        email = $("p.client-email span").text();
     }
     $.get(`https://signup-patbo.inovaki.com.br/get-field-by-email/?email=${email}&field=birthDate`, function(data) {
         console.log(data[0]);
@@ -400,8 +400,8 @@ function incluiClique() {
     });
 }
 
-function addBirthDateInput() {  
-  if(navigator.userAgent.toLowerCase().match('android')){  
+function addBirthDateInput() {
+  if(navigator.userAgent.toLowerCase().match('android')){
     $('<p class="client-birthDate input text required mask"><label for="client-birthDate" data-bind="text: birthDateLabel">Nascimento</label><input type="date" id="client-birthDate" class="input-small" placeholder="99/99/9999" onblur="validateBirthDate(this)" onclick="alert(\'CASO DESEJE MUDAR O ANO, BASTA CLICAR EM CIMA DO MESMO!\')"></p>').insertAfter('form fieldset .client-document:eq(1)');
   } else {
     $('<p class="client-birthDate input text required mask"><label for="client-birthDate" data-bind="text: birthDateLabel">Nascimento</label><input type="date" id="client-birthDate" class="input-small" placeholder="99/99/9999" onblur="validateBirthDate(this)"></p>').insertAfter('form fieldset .client-document:eq(1)');
@@ -412,30 +412,12 @@ function addBirthDateInput() {
 
 $(document).ready(function () {
   Scolados_Checkout.mounted();
-  console.log("Tentativa de teste");
-
-
-  if(window.location.href.match(/https\:\/\/www\.patbo\.com\.br\/checkout\/\?template\=popup\-c6\#\/cart/)){
-    setTimeout(() => {
-      showPopup();
-    }, 3000);
-  }
 
   addBirthDateInput();
   incluiClique();
   $("#edit-profile-data").click(function() {
-    console.log("entrou aqui");
-
       getBirthDate();
-
   });
-
-  /*$('#client-birthDate').mobiscroll().datepicker({
-      controls: ['date'],
-      touchUi: true
-  });*/
-
-  //$.mobile.page.prototype.options.degradeInputs.date = true;
 
   vtexjs.checkout.getOrderForm().done(function(orderForm) {
     verifyCEP(orderForm?.shippingData?.address?.postalCode)
@@ -469,65 +451,3 @@ $(document).ready(function () {
     return previousXMLHttpRequest.apply(this, arguments)
   }
 })
-
-function showPopup() {
-  // Verifica se a URL contém '#/cart'
-  if (window.location.hash === '#/cart') {
-    // Seleciona o elemento com a classe 'cart-more-options'
-    const container = document.querySelector('.cart-template.full-cart.span12.active');
-
-    if (container) {
-      // Cria um elemento de fundo para o pop-up
-      const popupBackground = document.createElement('div');
-      popupBackground.classList.add('container-popup-patbo-c6bank');
-
-      // Cria o elemento do pop-up
-      const popup = document.createElement('div');
-      popup.classList.add('popup-patbo-c6bank');
-
-      // Cria um link para envolver a imagem
-      const link = document.createElement('div');
-      // link.href = 'https://www.patbo.com.br/'; // link pop-up
-      // link.target = '_blank'; // Abre o link em uma nova aba
-
-      // Adiciona a imagem ao link
-      const image = document.createElement('img');
-      image.src = 'https://patbo.myvtex.com/arquivos/patbo-card-c6bank.png';
-      image.alt = 'Logo';
-      image.classList.add('popup-patbo-c6bank-image');
-      link.appendChild(image); // Adiciona a imagem ao link
-
-      popup.appendChild(link); // Adiciona o link (com a imagem) ao pop-up
-
-      // Adiciona um botão de fechar
-      const closeButton = document.createElement('button');
-      closeButton.innerText = 'X';
-      closeButton.classList.add('patbo-c6bank-popup-close-button');
-      closeButton.onclick = function() {
-        container.removeChild(popupBackground);
-      };
-
-      popup.appendChild(closeButton);
-
-      // Adiciona o pop-up ao fundo
-      popupBackground.appendChild(popup);
-
-      // Adiciona o fundo ao container específico
-      container.appendChild(popupBackground);
-
-      // Adiciona o evento para fechar o pop-up ao clicar fora dele
-      popupBackground.addEventListener('click', function(event) {
-        if (event.target === popupBackground) {
-          container.removeChild(popupBackground);
-        }
-      });
-
-      // Remove o pop-up automaticamente após 5 segundos
-      setTimeout(() => {
-        if (container.contains(popupBackground)) {
-          container.removeChild(popupBackground);
-        }
-      }, 5000);
-    }
-  }
-}
